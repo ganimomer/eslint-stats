@@ -12,8 +12,15 @@ module.exports = function(grunt) {
       all: ['test/']
     },
     eslint: {
+      // options: {
+      //   format: require('path').join(__dirname,'byError.js')
+      //
+      // },
       all: {
-        src: ['*.js']
+        src: ['*.js', 'test/*.js', 'util/*.js']
+      },
+      byError: {
+        src: ['*.js', 'test/*.js', 'util/*.js']
       }
     }
   });
