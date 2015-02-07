@@ -1,6 +1,6 @@
 'use strict';
-describe('formatUtils', function() {
-  var formatUtil = require('../util/formatUtil');
+describe('statsUtils', function() {
+  var statsUtil = require('../util/statsUtil');
   var _ = require('lodash');
   var eslintResults = [{
     filePath: 'path1',
@@ -27,11 +27,11 @@ describe('formatUtils', function() {
   ];
 
   it('should return an empty object for empty array results', function() {
-    expect(formatUtil.getErrorObject([])).toEqual({});
+    expect(statsUtil.getErrorObject([])).toEqual({});
   });
 
   it('should return an aggregated error object', function() {
-    var errorObj = formatUtil.getErrorObject(eslintResults);
+    var errorObj = statsUtil.getErrorObject(eslintResults);
     expect(Object.keys(errorObj).length).toBe(2);
     expect(errorObj.id1).toBe(2);
     expect(errorObj.id2).toBe(1);
@@ -48,7 +48,7 @@ describe('formatUtils', function() {
       ]
     };
     var resultsWithWarning = _.union(eslintResults, [warningResult]);
-    var errorObj = formatUtil.getErrorObject(resultsWithWarning);
+    var errorObj = statsUtil.getErrorObject(resultsWithWarning);
     expect(Object.keys(errorObj).length).toBe(2);
     expect(errorObj.id1).toBe(2);
     expect(errorObj.id2).toBe(1);
