@@ -6,7 +6,11 @@
   "scripts": {
     "test": "grunt test"
   },
-  "author": "Omer Ganim",
+  "author": {
+    "name": "Omer Ganim",
+    "email": "ganimomer@gmail.com",
+    "url": "http://github.com/ganimomer"
+  },
   "license": "MIT",
   "devDependencies": {
     "grunt": "^0.4.5",
