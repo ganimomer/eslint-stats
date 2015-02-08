@@ -3,11 +3,11 @@ Analyses the files for error frequency, rather than location. This is helpful wh
 
 ![screenshot](screenshot.png)
 
-#Install
+# Install
 ```js
 npm install --save-dev eslint-stats
 ```
-#Getting Started
+# Getting Started
 Use it with grunt:
 
 ```js
@@ -25,7 +25,7 @@ or use it directly with ESLint:
 $ eslint --format node_modules/eslint-stats/byError.js
 ```
 
-#Available Reporters:
+# Available Reporters:
 
-###byError
+### byError
 Shows the eslint report, aggragated by errors, without separation into specific files.
