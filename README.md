@@ -1,7 +1,7 @@
 #Statistic Reporter for ESLint.
 Analyses the files for error frequency, rather than location. This is helpful when introducing ESLint to an existing project.
 
-![screenshot](screenshot.png)
+![screenshot](https://raw.githubusercontent.com/ganimomer/eslint-stats/master/screenshot.png)
 
 # Install
 ```js
