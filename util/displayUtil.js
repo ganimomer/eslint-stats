@@ -18,7 +18,7 @@ function normalizeBarLength(num, maxResult) {
 }
 
 function getBar(length) {
-  return chalk.bgRed(_.repeat(' ', length)) + '\n';
+  return chalk.bgRed(_.repeat(' ', length));
 }
 
 function getObjectOutput(results) {
@@ -30,7 +30,7 @@ function getObjectOutput(results) {
   return _.reduce(results, function(soFar, num, rule) {
     return soFar + _.padRight(rule + ': ', maxRuleLength + 2) +
       chalk.magenta(_.padLeft(num, maxResultLength)) + '|' +
-    getBar(normalizeBarLength(num, maxResult));
+    getBar(normalizeBarLength(num, maxResult)) + '\n';
   }, '');
 }
 
