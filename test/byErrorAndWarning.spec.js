@@ -1,15 +1,15 @@
 'use strict';
-describe('byError', function() {
+describe('byErrorAndWarning', function() {
   var displayUtil = require('../util/displayUtil');
   var statsUtil = require('../util/statsUtil');
-  var byError = require('../byError');
+  var byErrorAndWarning = require('../byErrorAndWarning');
 
   it('should recieve results and pass them to methods', function() {
-    spyOn(statsUtil, 'getReportObjArray').andReturn([{ruleCount: {'semi': 1}, severity: 2}]);
+    spyOn(statsUtil, 'getReportObjArray').andReturn('intermediate');
     spyOn(displayUtil, 'getObjectOutput').andReturn('output');
-    var logOutput = byError('initial');
+    var logOutput = byErrorAndWarning('initial');
     expect(statsUtil.getReportObjArray).toHaveBeenCalledWith('initial');
-    expect(displayUtil.getObjectOutput).toHaveBeenCalledWith([{ruleCount: {'semi': 1}, severity: 2}]);
+    expect(displayUtil.getObjectOutput).toHaveBeenCalledWith('intermediate');
     expect(logOutput).toBe('output');
   });
 
