@@ -28,4 +28,10 @@ $ eslint --format node_modules/eslint-stats/byError.js
 # Available Reporters:
 
 ### byError
-Shows the eslint report, aggragated by errors, without separation into specific files.
+Shows the eslint report, aggragated by errors, without separation into specific files. Rules with warnings are not displayed
+
+### byWarning
+Shows the eslint report, aggragated by warnings, without separation into specific files.  Rules with errors are not displayed.
+
+### byErrorAndWarning
+Shows the eslint report, aggragated by errors and warnings, without separation into specific files. Errors are red, and warnings are yellow.

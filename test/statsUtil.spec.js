@@ -1,7 +1,8 @@
 'use strict';
+var _ = require('lodash');
+
 describe('statsUtils', function() {
   var statsUtil = require('../util/statsUtil');
-  var _ = require('lodash');
   var eslintResults = [{
     filePath: 'path1',
     messages: [
@@ -27,17 +28,17 @@ describe('statsUtils', function() {
   ];
 
   it('should return an empty object for empty array results', function() {
-    expect(statsUtil.getErrorObject([])).toEqual({});
+    expect(statsUtil.getReportObjArray([])).toEqual({});
   });
 
   it('should return an aggregated error object', function() {
-    var errorObj = statsUtil.getErrorObject(eslintResults);
-    expect(Object.keys(errorObj).length).toBe(2);
-    expect(errorObj.id1).toBe(2);
-    expect(errorObj.id2).toBe(1);
+    var errorObjArr = statsUtil.getReportObjArray(eslintResults);
+    expect(Object.keys(errorObjArr).length).toBe(2);
+    expect(_(errorObjArr).pluck('ruleCount').filter('id1').value()[0].id1).toBe(2);
+    expect(_(errorObjArr).pluck('ruleCount').filter('id2').value()[0].id2).toBe(1);
   });
 
-  it('should not aggregate warnings', function() {
+  it('should aggregate warnings', function() {
     var warningResult = {
       filePath: 'path3',
       messages: [
@@ -48,9 +49,9 @@ describe('statsUtils', function() {
       ]
     };
     var resultsWithWarning = _.union(eslintResults, [warningResult]);
-    var errorObj = statsUtil.getErrorObject(resultsWithWarning);
-    expect(Object.keys(errorObj).length).toBe(2);
-    expect(errorObj.id1).toBe(2);
-    expect(errorObj.id2).toBe(1);
+    var errorObjArr = statsUtil.getReportObjArray(resultsWithWarning);
+    expect(Object.keys(errorObjArr).length).toBe(3);
+    expect(_(errorObjArr).filter({severity: 1}).pluck('ruleCount').value()[0].id1).toBe(1);
+    expect(_(errorObjArr).pluck('ruleCount').filter('id2').value()[0].id2).toBe(1);
   });
 });

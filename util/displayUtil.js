@@ -17,20 +17,31 @@ function normalizeBarLength(num, maxResult) {
   return maxResult < maxBarLength ? num : Math.ceil((num / maxResult) * maxBarLength);
 }
 
-function getBar(length) {
-  return chalk.bgRed(_.repeat(' ', length));
+function getBar(length, severity) {
+  if (severity === 1) {
+    return chalk.bgYellow(_.repeat(' ', length));
+  } else if (severity === 2) {
+    return chalk.bgRed(_.repeat(' ', length));
+  }
 }
 
-function getObjectOutput(results) {
+function getObjectOutput(fullResults) {
+  var results = _.reduce(_.pluck(fullResults, 'ruleCount'), function(result, resObj) {
+    return _.assign(result, resObj);
+  }, {});
   var maxRuleLength = getMaxRuleLength(results);
   var maxResult = getMaxResult(results);
   var maxResultLength = ('' + maxResult).length;
   var otherLength = (': ' + '|').length;
   maxBarLength = process.stdout.columns - maxRuleLength - maxResultLength - otherLength;
-  return _.reduce(results, function(soFar, num, rule) {
+
+  return _.reduce(fullResults, function(soFar, resObj) {
+    var rule = _.keys(resObj.ruleCount)[0];
+    var num = resObj.ruleCount[rule];
+    var severity = resObj.severity;
     return soFar + _.padRight(rule + ': ', maxRuleLength + 2) +
       chalk.magenta(_.padLeft(num, maxResultLength)) + '|' +
-    getBar(normalizeBarLength(num, maxResult)) + '\n';
+      getBar(normalizeBarLength(num, maxResult), severity) + '\n';
   }, '');
 }
 
