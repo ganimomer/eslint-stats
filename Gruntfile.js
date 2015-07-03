@@ -1,15 +1,10 @@
 module.exports = function(grunt) {
   'use strict';
   grunt.initConfig({
-    jasmine_node: {
-      options: {
-        forceExit: true,
-        match: '.',
-        matchall: false,
-        extensions: 'js',
-        specNameMatcher: 'spec'
-      },
-      all: ['test/']
+    jasmine: {
+      test: {
+        src: ['test/*.spec.js']
+      }
     },
     eslint: {
       // options: {
@@ -25,8 +20,8 @@ module.exports = function(grunt) {
   });
 
   grunt.loadNpmTasks('grunt-eslint');
-  grunt.loadNpmTasks('grunt-jasmine-node');
+  grunt.loadNpmTasks('grunt-jasmine-npm');
 
   // Default task(s).
-  grunt.registerTask('default', ['eslint:all', 'jasmine_node']);
+  grunt.registerTask('default', ['eslint:all', 'jasmine']);
 };
