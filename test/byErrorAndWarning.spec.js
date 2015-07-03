@@ -4,9 +4,9 @@ describe('byErrorAndWarning', function() {
   var statsUtil = require('../util/statsUtil');
   var byErrorAndWarning = require('../byErrorAndWarning');
 
-  it('should recieve results and pass them to methods', function() {
-    spyOn(statsUtil, 'getReportObjArray').andReturn('intermediate');
-    spyOn(displayUtil, 'getObjectOutput').andReturn('output');
+  it('should receive results and pass them to methods', function() {
+    spyOn(statsUtil, 'getReportObjArray').and.returnValue('intermediate');
+    spyOn(displayUtil, 'getObjectOutput').and.returnValue('output');
     var logOutput = byErrorAndWarning('initial');
     expect(statsUtil.getReportObjArray).toHaveBeenCalledWith('initial');
     expect(displayUtil.getObjectOutput).toHaveBeenCalledWith('intermediate');
