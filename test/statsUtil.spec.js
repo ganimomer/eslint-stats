@@ -1,7 +1,7 @@
 'use strict';
 var _ = require('lodash');
 
-describe('statsUtils', function() {
+describe('statsUtils', function () {
   var statsUtil = require('../util/statsUtil');
   var eslintResults = [{
     filePath: 'path1',
@@ -16,30 +16,16 @@ describe('statsUtils', function() {
       }
     ]
   },
-  {
-    filePath: 'path2',
-    messages: [
-      {
-        ruleId: 'id1',
-        severity: 2
-      }
-    ]
-  }
-  ];
-
-  it('should return an empty object for empty array results', function() {
-    expect(statsUtil.getReportObjArray([])).toEqual({});
-  });
-
-  it('should return an aggregated error object', function() {
-    var errorObjArr = statsUtil.getReportObjArray(eslintResults);
-    expect(Object.keys(errorObjArr).length).toBe(2);
-    expect(_(errorObjArr).pluck('ruleCount').filter('id1').value()[0].id1).toBe(2);
-    expect(_(errorObjArr).pluck('ruleCount').filter('id2').value()[0].id2).toBe(1);
-  });
-
-  it('should aggregate warnings', function() {
-    var warningResult = {
+    {
+      filePath: 'path2',
+      messages: [
+        {
+          ruleId: 'id1',
+          severity: 2
+        }
+      ]
+    },
+    {
       filePath: 'path3',
       messages: [
         {
@@ -47,11 +33,23 @@ describe('statsUtils', function() {
           severity: 1
         }
       ]
-    };
-    var resultsWithWarning = _.union(eslintResults, [warningResult]);
-    var errorObjArr = statsUtil.getReportObjArray(resultsWithWarning);
-    expect(Object.keys(errorObjArr).length).toBe(3);
-    expect(_(errorObjArr).filter({severity: 1}).pluck('ruleCount').value()[0].id1).toBe(1);
-    expect(_(errorObjArr).pluck('ruleCount').filter('id2').value()[0].id2).toBe(1);
+    }];
+
+  it('should return an empty object for empty array results', function () {
+    expect(statsUtil.getStats([])).toEqual({});
+  });
+
+  it('should return an aggregated object by rule, then severity', function () {
+    var stats = statsUtil.getStats(eslintResults);
+    expect(_.size(stats)).toBe(2);
+    expect(stats.id1).toEqual({errors: 2, warnings: 1});
+    expect(stats.id2).toEqual({errors: 1});
+  });
+
+  it('should accept a second param, severity, which filters the severities', function() {
+    var stats = statsUtil.getStats(eslintResults, 2);
+    expect(_.size(stats)).toBe(2);
+    expect(stats.id1).toEqual({errors: 2});
+    expect(stats.id2).toEqual({errors: 1});
   });
 });

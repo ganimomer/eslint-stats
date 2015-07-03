@@ -1,48 +1,44 @@
 'use strict';
 var chalk = require('chalk');
 var _ = require('lodash');
-var maxBarLength;
 
-function getMaxRuleLength(results) {
-  return Math.max.apply(Math, _.map(results, function(val, key) {
-    return key.length;
-  }));
+var barColors = {
+  errors: 'bgRed',
+  warnings: 'bgYellow'
+};
+
+function maxValue(collection, attr) {
+  return _.max(collection, attr)[attr] || 0;
 }
 
-function getMaxResult(results) {
-  return _.max(results);
+function getMaxRuleLength(stats) {
+  return maxValue(Object.keys(stats), 'length');
 }
 
-function normalizeBarLength(num, maxResult) {
-  return maxResult < maxBarLength ? num : Math.ceil((num / maxResult) * maxBarLength);
+function getMaxResult(stats) {
+  return Math.max(maxValue(stats, 'errors'), maxValue(stats, 'warnings'));
 }
 
-function getBar(length, severity) {
-  if (severity === 1) {
-    return chalk.bgYellow(_.repeat(' ', length));
-  } else if (severity === 2) {
-    return chalk.bgRed(_.repeat(' ', length));
-  }
+function getBar(length, color) {
+  return chalk[color](_.repeat(' ', length));
 }
 
-function getObjectOutput(fullResults) {
-  var results = _.reduce(_.pluck(fullResults, 'ruleCount'), function(result, resObj) {
-    return _.assign(result, resObj);
-  }, {});
-  var maxRuleLength = getMaxRuleLength(results);
-  var maxResult = getMaxResult(results);
+function getObjectOutput(stats) {
+  var maxRuleLength = getMaxRuleLength(stats);
+  var maxResult = getMaxResult(stats);
   var maxResultLength = ('' + maxResult).length;
-  var otherLength = (': ' + '|').length;
-  maxBarLength = process.stdout.columns - maxRuleLength - maxResultLength - otherLength;
+  var maxBarLength = process.stdout.columns - maxRuleLength - maxResultLength - (': ' + '|').length;
+  var normalizeBarLength = function (num) {
+    return maxResult < maxBarLength ? num : Math.ceil((num / maxResult) * maxBarLength);
+  };
 
-  return _.reduce(fullResults, function(soFar, resObj) {
-    var rule = _.keys(resObj.ruleCount)[0];
-    var num = resObj.ruleCount[rule];
-    var severity = resObj.severity;
-    return soFar + _.padRight(rule + ': ', maxRuleLength + 2) +
-      chalk.magenta(_.padLeft(num, maxResultLength)) + '|' +
-      getBar(normalizeBarLength(num, maxResult), severity) + '\n';
-  }, '');
+  return _.map(stats, function (ruleStats, ruleId) {
+      return _.map(ruleStats, function (count, severity) {
+        return _.padRight(ruleId + ': ', maxRuleLength + 2) +
+          chalk.magenta(_.padLeft(count, maxResultLength)) + '|' +
+          getBar(normalizeBarLength(count), barColors[severity]);
+      }).join('\n');
+    }, '').join('\n') + '\n';
 }
 
 module.exports = {

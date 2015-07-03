@@ -1,45 +1,28 @@
 'use strict';
 var _ = require('lodash');
 
-function getReportObjArray(results) {
-  var warnings = _(results)
+function getStats(results, severities) {
+  severities = [].concat(severities || [1, 2]);
+  var severityNames =
+  {
+    1: 'warnings',
+    2: 'errors'
+  };
+  return _(results)
     .pluck('messages')
     .flatten()
-    .where({severity: 1})
-    .pluck('ruleId')
-    .countBy()
+    .filter(function(message) { return _.includes(severities, message.severity);})
+    .groupBy('ruleId')
+    .mapValues(function (ruleMessages) {
+      return _(ruleMessages)
+        .countBy('severity')
+        .mapKeys(function (value, key) {
+          return severityNames[key];
+        })
+        .value();
+    })
     .value();
-
-  var errors = _(results)
-    .pluck('messages')
-    .flatten()
-    .where({severity: 2})
-    .pluck('ruleId')
-    .countBy()
-    .value();
-
-  var errorsObj = _.map(warnings, function(count, rule) {
-    var resObj = {};
-    resObj[rule] = count;
-    return {
-      ruleCount: resObj,
-      severity: 1
-    };
-  }, {});
-
-  var warningsObj = _.map(errors, function(count, rule) {
-    var resObj = {};
-    resObj[rule] = count;
-    return {
-      ruleCount: resObj,
-      severity: 2
-    };
-  }, {});
-
-
-  return _.flatten([errorsObj, warningsObj]);
 }
-
 module.exports = {
-  getReportObjArray: getReportObjArray
+  getStats: getStats
 };
