@@ -1,31 +1,32 @@
 'use strict';
-describe('displayUtil', function() {
+describe('displayUtil', function () {
 
   var chalk = require('chalk');
   var displayUtil = require('../util/displayUtil');
   var _ = require('lodash');
 
-  function expectOutput(results, expectedOutput) {
-    expect('\n' + displayUtil.getObjectOutput(results)).toBe('\n' + expectedOutput);
+  function expectOutput(results, expectedOutput, isStacked) {
+    var method = isStacked ? displayUtil.getStackedOutput : displayUtil.getObjectOutput;
+    expect('\n' + chalk.white(method(results))).toBe('\n' + chalk.white(expectedOutput));
   }
 
-  describe('single property object', function() {
+  describe('single property object', function () {
 
-    it('should display object < maxBarLength with same number of red squares', function() {
+    it('should display object < maxBarLength with same number of red squares', function () {
       var stats = {'no-comma-dangle': {errors: 7}};
       var expectedOutput =
         'no-comma-dangle: ' + chalk.magenta(7) + '|' + chalk.bgRed('       ') + '\n';
       expectOutput(stats, expectedOutput);
     });
 
-    it('should display warning rules with yellow squares', function() {
+    it('should display warning rules with yellow squares', function () {
       var stats = {'no-comma-dangle': {warnings: 7}};
       var expectedOutput =
         'no-comma-dangle: ' + chalk.magenta(7) + '|' + chalk.bgYellow('       ') + '\n';
       expectOutput(stats, expectedOutput);
     });
 
-    it('should display object >=50 with 50 red squares', function() {
+    it('should display object >=50 with 50 red squares', function () {
       var stats = {'no-comma-dangle': {errors: 5000}};//[{ruleCount: {'no-comma-dangle': 5000}, severity: 2}];
       var maxLen = process.stdout.columns - ('no-comma-dangle: 5000|'.length);
       var redBar = chalk.bgRed(_.repeat(' ', maxLen));
@@ -35,8 +36,8 @@ describe('displayUtil', function() {
     });
   });
 
-  describe('multiple property object', function() {
-    it('should pad the results to longest rule', function() {
+  describe('multiple property object', function () {
+    it('should pad the results to longest rule', function () {
       var stats = {'no-comma-dangle': {errors: 1}, 'no-empty': {errors: 1}};
       var magenta1 = chalk.magenta(1);
       var redBg1 = chalk.bgRed(' ');
@@ -46,7 +47,7 @@ describe('displayUtil', function() {
       expectOutput(stats, expectedOutput);
     });
 
-    it('should pad the results to longest rule with mixed warnings and errors', function() {
+    it('should pad the results to longest rule with mixed warnings and errors', function () {
       var stats = {
         'no-comma-dangle': {errors: 1},
         'no-empty': {warnings: 1}
@@ -60,7 +61,7 @@ describe('displayUtil', function() {
       expectOutput(stats, expectedOutput);
     });
 
-    it('should padLeft the results to the longest number', function(){
+    it('should padLeft the results to the longest number', function () {
       var stats = {
         'no-comma-dangle': {errors: 1},
         'no-empty': {errors: 21}
@@ -72,11 +73,7 @@ describe('displayUtil', function() {
       expectOutput(stats, expectedOutput);
     });
 
-    it('should padLeft the results to the longest number with mixed warnings and errors', function(){
-      //var stats = [
-      //  {ruleCount: {'no-comma-dangle': 1}, severity: 1},
-      //  {ruleCount: {'no-empty': 21}, severity: 2}
-      //  ];
+    it('should padLeft the results to the longest number with mixed warnings and errors', function () {
       var stats = {
         'no-comma-dangle': {warnings: 1},
         'no-empty': {errors: 21}
@@ -89,18 +86,70 @@ describe('displayUtil', function() {
       expectOutput(stats, expectedOutput);
     });
 
-    it('should normalize bars, rounding up, if any result > maxLen', function() {
+    it('should normalize bars, rounding down, if any result > maxLen', function () {
       var stats = {
         'no-comma-dangle': {errors: 150},
         'no-empty': {errors: 5000}
       };
       var maxLen = process.stdout.columns - ('no-comma-dangle: 5000|'.length);
       var redBar = chalk.bgRed(_.repeat(' ', maxLen));
-      var ratioBar = chalk.bgRed(_.repeat(' ', Math.ceil(150 * maxLen / 5000)));
+      var ratioBar = chalk.bgRed(_.repeat(' ', Math.floor(150 * maxLen / 5000)));
       var expectedOutput =
         'no-comma-dangle: ' + chalk.magenta(' ' + 150) + '|' + ratioBar + '\n' +
         'no-empty:        ' + chalk.magenta(5000) + '|' + redBar + '\n';
       expectOutput(stats, expectedOutput);
+    });
+  });
+  describe('stacked output', function () {
+    function stackedBar(red, yellow) {
+      return chalk.bgRed(_.repeat(' ', red)) + chalk.bgYellow(_.repeat(' ', yellow));
+    }
+
+    it('should default back to regular output if there is no rule to stack', function () {
+      var stats = {
+        'no-comma-dangle': {warnings: 1},
+        'no-empty': {errors: 21}
+      };
+      expect(displayUtil.getStackedOutput(stats)).toEqual(displayUtil.getObjectOutput(stats));
+    });
+    it('should stack errors first, then warnings', function () {
+      var stats = {
+        'no-comma-dangle': {warnings: 1, errors: 2}
+      };
+      var expectedOutput = 'no-comma-dangle: ' + chalk.magenta('2,1') + '|' + stackedBar(2, 1) + '\n';
+      expectOutput(stats, expectedOutput, true);
+    });
+
+    it('should show zeroes in lines that are not stacked', function () {
+      var stats = {
+        'no-comma-dangle': {warnings: 1, errors: 2},
+        'no-empty': {errors: 3}
+      };
+      var expectedOutput =
+        'no-comma-dangle: ' + chalk.magenta('2,1') + '|' + stackedBar(2, 1) + '\n' +
+        'no-empty:        ' + chalk.magenta('3,0') + '|' + stackedBar(3, 0) + '\n';
+      expectOutput(stats, expectedOutput, true);
+    });
+    it('should pad error numbers and warning numbers separately', function () {
+      var stats = {
+        'no-comma-dangle': {warnings: 1, errors: 10},
+        'no-empty': {errors: 3, warnings: 10}
+      };
+      var expectedOutput =
+        'no-comma-dangle: ' + chalk.magenta('10, 1') + '|' + stackedBar(10, 1) + '\n' +
+        'no-empty:        ' + chalk.magenta(' 3,10') + '|' + stackedBar(3, 10) + '\n';
+      expectOutput(stats, expectedOutput, true);
+    });
+    it('should normalize according to sum of both errors and warnings', function () {
+      var halfTheScreen = process.stdout.columns / 2;
+      var stats = {
+        'no-comma-dangle': {warnings: halfTheScreen, errors: halfTheScreen}
+      };
+      var stackedBarLength = process.stdout.columns - 'no-comma-dangle: ,|'.length - (('' + halfTheScreen).length * 2);
+      var expectedBarLength = Math.floor(stackedBarLength / 2);
+      var expectedOutput = 'no-comma-dangle: ' + chalk.magenta(halfTheScreen + ',' + halfTheScreen) + '|' +
+        stackedBar(expectedBarLength, expectedBarLength) + '\n';
+      expectOutput(stats, expectedOutput, true);
     });
   });
 });
