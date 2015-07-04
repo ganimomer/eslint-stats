@@ -24,4 +24,5 @@ module.exports = function(grunt) {
 
   // Default task(s).
   grunt.registerTask('default', ['eslint:all', 'jasmine']);
+  grunt.registerTask('test', ['jasmine']);
 };
