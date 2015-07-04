@@ -1,3 +1,6 @@
+[![Coverage Status](https://coveralls.io/repos/ganimomer/eslint-stats/badge.svg?branch=master)](https://coveralls.io/r/<account>/<repository>?branch=master)
+[![Build Status](https://travis-ci.org/ganimomer/eslint-stats.png)](https://travis-ci.org/ganimomer/eslint-stats)
+
 #Statistic Reporter for ESLint.
 Analyses the files for error frequency, rather than location. This is helpful when introducing ESLint to an existing project.
 
