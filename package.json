@@ -14,9 +14,11 @@
   },
   "license": "MIT",
   "devDependencies": {
+    "coveralls": "^2.11.2",
     "grunt": "^0.4.5",
     "grunt-eslint": "^5.1.0",
-    "grunt-jasmine-npm": "^0.2.1"
+    "grunt-jasmine-npm": "^0.2.1",
+    "istanbul": "^0.3.17"
   },
   "dependencies": {
     "chalk": "^0.5.1",
