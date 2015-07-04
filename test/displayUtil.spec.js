@@ -152,4 +152,16 @@ describe('displayUtil', function () {
       expectOutput(stats, expectedOutput, true);
     });
   });
+  describe('getOutputByFolder', function () {
+    it('should divide outputs by folder with underline', function () {
+      var stats = {
+        folder1: {'no-comma-dangle': {errors: 7}},
+        folder2: {'no-empty': {errors: 7}}
+      };
+      var expectedOutput =
+        chalk.underline('folder1:') + '\n' + displayUtil.getObjectOutput(stats.folder1) +
+        chalk.underline('folder2:') + '\n' + displayUtil.getObjectOutput(stats.folder2);
+      expect('\n' + displayUtil.getOutputByFolder(stats)).toEqual('\n' + expectedOutput);
+    });
+  });
 });

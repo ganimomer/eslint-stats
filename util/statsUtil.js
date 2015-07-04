@@ -23,6 +23,18 @@ function getStats(results, severities) {
     })
     .value();
 }
+function getStatsByFolder(results, severities) {
+  var path = require('path');
+  return _(results)
+    .map(function(result) {
+      return _.assign({}, result, {folder: path.dirname(result.filePath)});
+    })
+    .groupBy('folder')
+    .mapKeys(function(value, key) { return key === '.' ? 'Base Folder' : key;})
+    .mapValues(function(messages) { return getStats(messages, severities);})
+    .value();
+}
 module.exports = {
-  getStats: getStats
+  getStats: getStats,
+  getStatsByFolder: getStatsByFolder
 };

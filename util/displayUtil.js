@@ -67,23 +67,31 @@ function getStackedOutput(stats) {
   var maxResultLengths = _.mapValues(maxResults, getStringLength);
   var maxBarLength = process.stdout.columns - maxRuleLength - _.sum(maxResultLengths) - (': ' + ',' + '|').length;
 
-  var getStackedBar = function(ruleStats) {
+  var getStackedBar = function (ruleStats) {
     var totalLength = _.sum(ruleStats);
-    console.log(totalLength);
     return getBar(normalizeBarLength(ruleStats.errors, totalLength, maxBarLength), barColors.errors) +
       getBar(normalizeBarLength(ruleStats.warnings, totalLength, maxBarLength), barColors.warnings);
   };
 
   return _.map(stats, function (ruleStats, ruleId) {
-    ruleStats = _.defaults({}, ruleStats, _.zipObject(allSeverities, [0, 0]));
-    return _.padRight(ruleId + ': ', maxRuleLength + 2) +
-      chalk.magenta(_.padLeft(ruleStats.errors, maxResultLengths.errors) + ',' +
-      _.padLeft(ruleStats.warnings, maxResultLengths.warnings)) + '|' +
+      ruleStats = _.defaults({}, ruleStats, _.zipObject(allSeverities, [0, 0]));
+      return _.padRight(ruleId + ': ', maxRuleLength + 2) +
+        chalk.magenta(_.padLeft(ruleStats.errors, maxResultLengths.errors) + ',' +
+          _.padLeft(ruleStats.warnings, maxResultLengths.warnings)) + '|' +
         getStackedBar(ruleStats);
-  }).join('\n') + '\n';
+    }).join('\n') + '\n';
+}
+
+function getOutputByFolder(stats) {
+  return _(stats)
+    .pick(_.size)
+    .map(function (folderStats, folderName) {
+      return chalk.underline(folderName + ':') + '\n' + getObjectOutput(folderStats);
+    }).join('');
 }
 
 module.exports = {
   getObjectOutput: getObjectOutput,
-  getStackedOutput: getStackedOutput
+  getStackedOutput: getStackedOutput,
+  getOutputByFolder: getOutputByFolder
 };
