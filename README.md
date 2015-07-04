@@ -35,3 +35,9 @@ Shows the eslint report, aggragated by warnings, without separation into specifi
 
 ### byErrorAndWarning
 Shows the eslint report, aggragated by errors and warnings, without separation into specific files. Errors are red, and warnings are yellow.
+
+### byErrorAndWarningStacked
+Shows the eslint report, aggragated by errors and warnings, without separation into specific files. Errors are red, and warnings are yellow. 
+If any rule is an error in one file and a warning in another, results show up stacked.
+ 
+ ### byFolder
