@@ -7,6 +7,10 @@
     "test": "istanbul cover --include-all-sources grunt test",
     "coveralls": "cat ./coverage/lcov.info | ./node_modules/.bin/coveralls"
   },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/ganimomer/eslint-stats.git"
+  },
   "author": {
     "name": "Omer Ganim",
     "email": "ganimomer@gmail.com",
