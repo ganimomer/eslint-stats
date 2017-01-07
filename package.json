@@ -5,9 +5,9 @@
   "main": "index.js",
   "scripts": {
     "lint": "eslint .",
-    "unit": "jasmine test/**/*.js",
-    "test": "npm run lint && istanbul cover --include-all-sources npm run unit",
-    "coveralls": "cat ./coverage/lcov.info | ./node_modules/.bin/coveralls"
+    "unit": "cross-env NODE_ENV=test nyc jasmine test/**/*.js",
+    "test": "npm run lint && npm run unit",
+    "coveralls": "nyc report --reporter=text-lcov | coveralls"
   },
   "repository": {
     "type": "git",
@@ -21,10 +21,11 @@
   "license": "MIT",
   "devDependencies": {
     "coveralls": "^2.11.2",
+    "cross-env": "^3.1.4",
     "eslint": "^3.13.0",
     "eslint-config-wix-editor": "^0.2.3",
-    "istanbul": "^0.3.17",
-    "jasmine": "^2.5.2"
+    "jasmine": "^2.5.2",
+    "nyc": "^10.0.0"
   },
   "dependencies": {
     "chalk": "^0.5.1",
