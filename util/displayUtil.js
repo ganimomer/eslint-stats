@@ -41,14 +41,15 @@ function getObjectOutput(stats) {
   var maxResult = getMaxResult(stats);
   var maxResultLength = getStringLength(maxResult);
   var maxBarLength = process.stdout.columns - maxRuleLength - maxResultLength - (': ' + '|').length;
+  var sortedRuleNames = Object.keys(stats).sort();
 
-  return _.map(stats, function (ruleStats, ruleId) {
-      return _.map(ruleStats, function (count, severity) {
-        return _.padRight(ruleId + ': ', maxRuleLength + 2) +
-          chalk.magenta(_.padLeft(count, maxResultLength)) + '|' +
-          getBar(normalizeBarLength(count, maxResult, maxBarLength), barColors[severity]);
-      }).join('\n');
-    }, '').join('\n') + '\n';
+  return _.map(sortedRuleNames, function (ruleId) {
+    return _.map(stats[ruleId], function (count, severity) {
+      return _.padRight(ruleId + ': ', maxRuleLength + 2) +
+        chalk.magenta(_.padLeft(count, maxResultLength)) + '|' +
+        getBar(normalizeBarLength(count, maxResult, maxBarLength), barColors[severity]);
+    }).join('\n');
+  }, '').join('\n') + '\n';
 }
 
 function isAnyRuleStacked(stats) {
