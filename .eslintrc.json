@@ -1,0 +1,11 @@
+{
+ "extends": "wix-editor/node",
+  "rules": {
+    "semi": "off",
+    "object-shorthand": "off",
+    "no-var": "off",
+    "prefer-arrow-callback": "off",
+    "prefer-template": "off",
+    "strict": "off"
+  }
+}

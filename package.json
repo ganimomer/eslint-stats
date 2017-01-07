@@ -4,7 +4,9 @@
   "description": "A package of custom formatters that show aggregated stats of eslint errors",
   "main": "index.js",
   "scripts": {
-    "test": "istanbul cover --include-all-sources grunt test",
+    "lint": "eslint .",
+    "unit": "jasmine test/**/*.js",
+    "test": "npm run lint && istanbul cover --include-all-sources npm run unit",
     "coveralls": "cat ./coverage/lcov.info | ./node_modules/.bin/coveralls"
   },
   "repository": {
@@ -19,11 +21,10 @@
   "license": "MIT",
   "devDependencies": {
     "coveralls": "^2.11.2",
-    "grunt": "^0.4.5",
-    "grunt-cli": "^1.2.0",
-    "grunt-eslint": "^5.1.0",
-    "grunt-jasmine-npm": "^0.2.1",
-    "istanbul": "^0.3.17"
+    "eslint": "^3.13.0",
+    "eslint-config-wix-editor": "^0.2.3",
+    "istanbul": "^0.3.17",
+    "jasmine": "^2.5.2"
   },
   "dependencies": {
     "chalk": "^0.5.1",
