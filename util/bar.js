@@ -1,11 +1,11 @@
-'use strict';
+'use strict'
 
-const chalk = require('chalk');
-const capitalize = require('lodash/capitalize');
-const repeat = require('lodash/repeat');
+const chalk = require('chalk')
+const capitalize = require('lodash/capitalize')
+const repeat = require('lodash/repeat')
 
 module.exports = {
   getString(length, color) {
-    return chalk[color](repeat(' ', length));
+    return chalk[color](repeat(' ', length))
   }
-};
+}

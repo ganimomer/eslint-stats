@@ -1,9 +1,9 @@
-'use strict';
+'use strict'
 
 module.exports = function(results) {
-  var stats = require('./util/stats');
-  var displayUtil = require('./util/chart');
+  const stats = require('./util/stats')
+  const displayUtil = require('./util/chart')
 
-  var obj = stats.byRule(results);
-  return displayUtil.getObjectOutput(obj, process.stdout.columns);
-};
+  const obj = stats.byRule(results)
+  return displayUtil.getObjectOutput(obj, process.stdout.columns)
+}

@@ -1,8 +1,8 @@
-'use strict';
-describe('index', function() {
+'use strict'
+describe('index', () => {
 
-  it('should return this path, followed by "byError"', function() {
-    var endpoint = require('../index');
-    expect(endpoint.byError).toEqual(process.cwd() + '/byError.js');
-  });
-});
+  it('should return this path, followed by "byError"', () => {
+    const endpoint = require('../index')
+    expect(endpoint.byError).toEqual(`${process.cwd()}/byError.js`)
+  })
+})
