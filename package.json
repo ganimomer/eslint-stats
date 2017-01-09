@@ -18,9 +18,12 @@
     "email": "ganimomer@gmail.com",
     "url": "http://github.com/ganimomer"
   },
+  "engines": {
+    "node": ">=4.0.0"
+  },
   "license": "MIT",
   "devDependencies": {
-    "coveralls": "^2.11.2",
+    "coveralls": "^2.11.15",
     "cross-env": "^3.1.4",
     "eslint": "^3.13.0",
     "eslint-config-wix-editor": "^0.2.3",
@@ -29,6 +32,6 @@
   },
   "dependencies": {
     "chalk": "^0.5.1",
-    "lodash": "^3.10.0"
+    "lodash": "^4.17.4"
   }
 }

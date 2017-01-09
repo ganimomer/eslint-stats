@@ -1,38 +1,45 @@
 'use strict';
 describe('displayUtil', function () {
 
-  var chalk = require('chalk');
-  var displayUtil = require('../util/displayUtil');
+  const chalk = require('chalk');
+  const bar = require('../util/bar');
+
+  const testBar = (length, color) => `[${color}, ${length}]`;
+  beforeEach(() => {
+    spyOn(bar, 'getString').and.callFake(testBar);
+  });
+
+  const maxWidth = 100
+
+  var chart = require('../util/chart');
   var _ = require('lodash');
 
+  const prettify = input => '\n' + chalk.white(input);
+
   function expectOutput(results, expectedOutput, isStacked) {
-    var method = isStacked ? displayUtil.getStackedOutput : displayUtil.getObjectOutput;
-    expect('\n' + chalk.white(method(results))).toBe('\n' + chalk.white(expectedOutput));
+    var method = isStacked ? chart.getStackedOutput : chart.getObjectOutput;
+    expect(prettify(method(results, maxWidth))).toBe(prettify(expectedOutput));
   }
 
   describe('single property object', function () {
 
     it('should display object < maxBarLength with same number of red squares', function () {
       var stats = {'no-comma-dangle': {errors: 7}};
-      var expectedOutput =
-        'no-comma-dangle: ' + chalk.magenta(7) + '|' + chalk.bgRed('       ') + '\n';
-      expectOutput(stats, expectedOutput);
+      var expectedOutput = `no-comma-dangle: ${chalk.magenta(7)}|${testBar(7, 'bgRed')}` + '\n';
+      expect(prettify(chart.getObjectOutput(stats, maxWidth))).toBe(prettify(expectedOutput));
     });
 
     it('should display warning rules with yellow squares', function () {
       var stats = {'no-comma-dangle': {warnings: 7}};
-      var expectedOutput =
-        'no-comma-dangle: ' + chalk.magenta(7) + '|' + chalk.bgYellow('       ') + '\n';
-      expectOutput(stats, expectedOutput);
+      var expectedOutput = `no-comma-dangle: ${chalk.magenta(7)}|${testBar(7, 'bgYellow')}` + '\n';
+      expect(prettify(chart.getObjectOutput(stats, maxWidth))).toBe(prettify(expectedOutput));
     });
 
-    it('should display object >=50 with 50 red squares', function () {
-      var stats = {'no-comma-dangle': {errors: 5000}};//[{ruleCount: {'no-comma-dangle': 5000}, severity: 2}];
-      var maxLen = process.stdout.columns - ('no-comma-dangle: 5000|'.length);
-      var redBar = chalk.bgRed(_.repeat(' ', maxLen));
-      var expectedOutput =
-        'no-comma-dangle: ' + chalk.magenta(5000) + '|' + redBar + '\n';
-      expectOutput(stats, expectedOutput);
+    it('should display object >= maxWidth with maximum amount of red squares available', function () {
+      var stats = {'no-comma-dangle': {errors: 5000}};
+      var maxLen = maxWidth - ('no-comma-dangle: 5000|'.length);
+      var expectedOutput = 'no-comma-dangle: ' + chalk.magenta(5000) + '|' + testBar(maxLen, 'bgRed') + '\n';
+      expect(prettify(chart.getObjectOutput(stats, maxWidth))).toBe(prettify(expectedOutput));
     });
   });
 
@@ -40,11 +47,11 @@ describe('displayUtil', function () {
     it('should pad the results to longest rule', function () {
       var stats = {'no-comma-dangle': {errors: 1}, 'no-empty': {errors: 1}};
       var magenta1 = chalk.magenta(1);
-      var redBg1 = chalk.bgRed(' ');
+      var redBg1 = testBar(1, 'bgRed');
       var expectedOutput =
         'no-comma-dangle: ' + magenta1 + '|' + redBg1 + '\n' +
         'no-empty:        ' + magenta1 + '|' + redBg1 + '\n';
-      expectOutput(stats, expectedOutput);
+      expect(prettify(chart.getObjectOutput(stats, maxWidth))).toBe(prettify(expectedOutput));
     });
 
     it('should pad the results to longest rule with mixed warnings and errors', function () {
@@ -53,12 +60,12 @@ describe('displayUtil', function () {
         'no-empty': {warnings: 1}
       };
       var magenta1 = chalk.magenta(1);
-      var redBg1 = chalk.bgRed(' ');
-      var yellowBg1 = chalk.bgYellow(' ');
+      var redBg1 = testBar(1, 'bgRed');
+      var yellowBg1 = testBar(1, 'bgYellow');
       var expectedOutput =
         'no-comma-dangle: ' + magenta1 + '|' + redBg1 + '\n' +
         'no-empty:        ' + magenta1 + '|' + yellowBg1 + '\n';
-      expectOutput(stats, expectedOutput);
+      expect(prettify(chart.getObjectOutput(stats, maxWidth))).toBe(prettify(expectedOutput));
     });
 
     it('should padLeft the results to the longest number', function () {
@@ -66,11 +73,11 @@ describe('displayUtil', function () {
         'no-comma-dangle': {errors: 1},
         'no-empty': {errors: 21}
       };
-      var redBg21 = chalk.bgRed(_.repeat(' ', 21));
+      var redBg21 = testBar(21, 'bgRed');
       var expectedOutput =
-        'no-comma-dangle: ' + chalk.magenta(' ' + 1) + '|' + chalk.bgRed(' ') + '\n' +
+        'no-comma-dangle: ' + chalk.magenta(' ' + 1) + '|' + testBar(1, 'bgRed') + '\n' +
         'no-empty:        ' + chalk.magenta(21) + '|' + redBg21 + '\n';
-      expectOutput(stats, expectedOutput);
+      expect(prettify(chart.getObjectOutput(stats, maxWidth))).toBe(prettify(expectedOutput));
     });
 
     it('should padLeft the results to the longest number with mixed warnings and errors', function () {
@@ -78,12 +85,12 @@ describe('displayUtil', function () {
         'no-comma-dangle': {warnings: 1},
         'no-empty': {errors: 21}
       };
-      var redBg21 = chalk.bgRed(_.repeat(' ', 21));
-      var yellowBg1 = chalk.bgYellow(' ');
+      var redBg21 = testBar(21, 'bgRed');
+      var yellowBg1 = testBar(1, 'bgYellow');
       var expectedOutput =
         'no-comma-dangle: ' + chalk.magenta(' ' + 1) + '|' + yellowBg1 + '\n' +
         'no-empty:        ' + chalk.magenta(21) + '|' + redBg21 + '\n';
-      expectOutput(stats, expectedOutput);
+      expect(prettify(chart.getObjectOutput(stats, maxWidth))).toBe(prettify(expectedOutput));
     });
 
     it('should normalize bars, rounding down, if any result > maxLen', function () {
@@ -91,18 +98,18 @@ describe('displayUtil', function () {
         'no-comma-dangle': {errors: 150},
         'no-empty': {errors: 5000}
       };
-      var maxLen = process.stdout.columns - ('no-comma-dangle: 5000|'.length);
-      var redBar = chalk.bgRed(_.repeat(' ', maxLen));
-      var ratioBar = chalk.bgRed(_.repeat(' ', Math.floor(150 * maxLen / 5000)));
+      var maxLen = maxWidth - ('no-comma-dangle: 5000|'.length);
+      var redBar = testBar(maxLen, 'bgRed');
+      var ratioBar = testBar(Math.floor(150 * maxLen / 5000), 'bgRed');
       var expectedOutput =
         'no-comma-dangle: ' + chalk.magenta(' ' + 150) + '|' + ratioBar + '\n' +
         'no-empty:        ' + chalk.magenta(5000) + '|' + redBar + '\n';
-      expectOutput(stats, expectedOutput);
+      expect(prettify(chart.getObjectOutput(stats, maxWidth))).toBe(prettify(expectedOutput));
     });
   });
   describe('stacked output', function () {
     function stackedBar(red, yellow) {
-      return chalk.bgRed(_.repeat(' ', red)) + chalk.bgYellow(_.repeat(' ', yellow));
+      return testBar(red, 'bgRed') + testBar(yellow, 'bgYellow');
     }
 
     it('should default back to regular output if there is no rule to stack', function () {
@@ -110,7 +117,7 @@ describe('displayUtil', function () {
         'no-comma-dangle': {warnings: 1},
         'no-empty': {errors: 21}
       };
-      expect(displayUtil.getStackedOutput(stats)).toEqual(displayUtil.getObjectOutput(stats));
+      expect(chart.getStackedOutput(stats, maxWidth)).toEqual(chart.getObjectOutput(stats, maxWidth));
     });
     it('should stack errors first, then warnings', function () {
       var stats = {
@@ -141,14 +148,12 @@ describe('displayUtil', function () {
       expectOutput(stats, expectedOutput, true);
     });
     it('should normalize according to sum of both errors and warnings', function () {
-      var halfTheScreen = process.stdout.columns / 2;
       var stats = {
-        'no-comma-dangle': {warnings: halfTheScreen, errors: halfTheScreen}
+        'no-comma-dangle': {warnings: 50, errors: 50}
       };
-      var stackedBarLength = process.stdout.columns - 'no-comma-dangle: ,|'.length - (('' + halfTheScreen).length * 2);
-      var expectedBarLength = Math.floor(stackedBarLength / 2);
-      var expectedOutput = 'no-comma-dangle: ' + chalk.magenta(halfTheScreen + ',' + halfTheScreen) + '|' +
-        stackedBar(expectedBarLength, expectedBarLength) + '\n';
+      var stackedBarLength = maxWidth - 'no-comma-dangle: 50,50|'.length;
+      var expectedBarLength = Math.floor((stackedBarLength + 4) / 2);
+      var expectedOutput = 'no-comma-dangle: ' + chalk.magenta('50,50') + '|' + stackedBar(expectedBarLength, expectedBarLength) + '\n';
       expectOutput(stats, expectedOutput, true);
     });
   });
@@ -159,9 +164,9 @@ describe('displayUtil', function () {
         folder2: {'no-empty': {errors: 7}}
       };
       var expectedOutput =
-        chalk.underline('folder1:') + '\n' + displayUtil.getObjectOutput(stats.folder1) +
-        chalk.underline('folder2:') + '\n' + displayUtil.getObjectOutput(stats.folder2);
-      expect('\n' + displayUtil.getOutputByFolder(stats)).toEqual('\n' + expectedOutput);
+        chalk.underline('folder1:') + '\n' + chart.getObjectOutput(stats.folder1, maxWidth) +
+        chalk.underline('folder2:') + '\n' + chart.getObjectOutput(stats.folder2, maxWidth);
+      expect(prettify(chart.getOutputByFolder(stats, maxWidth))).toEqual(prettify(expectedOutput));
     });
   });
 });

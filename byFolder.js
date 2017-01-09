@@ -1,8 +1,8 @@
 'use strict';
 
 module.exports = function(results) {
-  var statsUtil = require('./util/statsUtil');
-  var displayUtil = require('./util/displayUtil');
-  var obj = statsUtil.getStatsByFolder(results);
-  return displayUtil.getOutputByFolder(obj);
+  var stats = require('./util/stats');
+  var displayUtil = require('./util/chart');
+  var obj = stats.byFolderAndRule(results);
+  return displayUtil.getOutputByFolder(obj, process.stdout.columns);
 };

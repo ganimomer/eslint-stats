@@ -1,8 +1,8 @@
 'use strict';
 module.exports = function(results) {
-  var statsUtil = require('./util/statsUtil');
-  var displayUtil = require('./util/displayUtil');
+  var stats = require('./util/stats');
+  var displayUtil = require('./util/chart');
 
-  var warningObj = statsUtil.getStats(results, 1);
-  return displayUtil.getObjectOutput(warningObj);
+  var warningObj = stats.byRule(results, 1);
+  return displayUtil.getObjectOutput(warningObj, process.stdout.columns);
 };

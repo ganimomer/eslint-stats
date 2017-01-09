@@ -1,9 +1,9 @@
 'use strict';
 
 module.exports = function(results) {
-  var statsUtil = require('./util/statsUtil');
-  var displayUtil = require('./util/displayUtil');
+  var stats = require('./util/stats');
+  var displayUtil = require('./util/chart');
 
-  var obj = statsUtil.getStats(results);
-  return displayUtil.getStackedOutput(obj);
+  var obj = stats.byRule(results);
+  return displayUtil.getStackedOutput(obj, process.stdout.columns);
 };

@@ -6,6 +6,7 @@
     "no-var": "off",
     "prefer-arrow-callback": "off",
     "prefer-template": "off",
-    "strict": "off"
+    "strict": "off",
+    "no-confusing-arrow": "off"
   }
 }

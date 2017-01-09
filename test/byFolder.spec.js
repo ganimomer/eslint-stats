@@ -1,15 +1,15 @@
 'use strict';
 describe('byFolder', function() {
-  var displayUtil = require('../util/displayUtil');
-  var statsUtil = require('../util/statsUtil');
-  var byFolder = require('../byFolder');
+  const chart = require('../util/chart');
+  const stats = require('../util/stats');
+  const byFolder = require('../byFolder');
 
   it('should receive results and pass them to methods', function() {
-    spyOn(statsUtil, 'getStatsByFolder').and.returnValue('intermediate');
-    spyOn(displayUtil, 'getOutputByFolder').and.returnValue('output');
+    spyOn(stats, 'byFolderAndRule').and.returnValue('intermediate');
+    spyOn(chart, 'getOutputByFolder').and.returnValue('output');
     var logOutput = byFolder('initial');
-    expect(statsUtil.getStatsByFolder).toHaveBeenCalledWith('initial');
-    expect(displayUtil.getOutputByFolder).toHaveBeenCalledWith('intermediate');
+    expect(stats.byFolderAndRule).toHaveBeenCalledWith('initial');
+    expect(chart.getOutputByFolder).toHaveBeenCalledWith('intermediate', jasmine.any(Number));
     expect(logOutput).toBe('output');
   });
 

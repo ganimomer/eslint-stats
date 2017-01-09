@@ -1,15 +1,15 @@
 'use strict';
 describe('byErrorAndWarningStacked', function() {
-  var displayUtil = require('../util/displayUtil');
-  var statsUtil = require('../util/statsUtil');
+  const chart = require('../util/chart');
+  const stats = require('../util/stats');
   var byErrorAndWarningStacked = require('../byErrorAndWarningStacked');
 
   it('should receive results and pass them to methods', function() {
-    spyOn(statsUtil, 'getStats').and.returnValue('intermediate');
-    spyOn(displayUtil, 'getStackedOutput').and.returnValue('output');
+    spyOn(stats, 'byRule').and.returnValue('intermediate');
+    spyOn(chart, 'getStackedOutput').and.returnValue('output');
     var logOutput = byErrorAndWarningStacked('initial');
-    expect(statsUtil.getStats).toHaveBeenCalledWith('initial');
-    expect(displayUtil.getStackedOutput).toHaveBeenCalledWith('intermediate');
+    expect(stats.byRule).toHaveBeenCalledWith('initial');
+    expect(chart.getStackedOutput).toHaveBeenCalledWith('intermediate', jasmine.any(Number));
     expect(logOutput).toBe('output');
   });
 

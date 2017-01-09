@@ -1,8 +1,8 @@
 'use strict';
 var _ = require('lodash');
 
-describe('statsUtils', function () {
-  var statsUtil = require('../util/statsUtil');
+describe('stats', function () {
+  var statsUtil = require('../util/stats');
   var eslintResults = [{
     filePath: 'path1',
     messages: [
@@ -36,24 +36,24 @@ describe('statsUtils', function () {
     }];
 
   it('should return an empty object for empty array results', function () {
-    expect(statsUtil.getStats([])).toEqual({});
+    expect(statsUtil.byRule([])).toEqual({});
   });
 
   it('should return an aggregated object by rule, then severity', function () {
-    var stats = statsUtil.getStats(eslintResults);
+    var stats = statsUtil.byRule(eslintResults);
     expect(_.size(stats)).toBe(2);
     expect(stats.id1).toEqual({errors: 2, warnings: 1});
     expect(stats.id2).toEqual({errors: 1});
   });
 
   it('should accept a second param, severity, which filters the severities', function () {
-    var stats = statsUtil.getStats(eslintResults, 2);
+    var stats = statsUtil.byRule(eslintResults, 2);
     expect(_.size(stats)).toBe(2);
     expect(stats.id1).toEqual({errors: 2});
     expect(stats.id2).toEqual({errors: 1});
   });
 
-  describe('getStatsByFolder', function () {
+  describe('byFolderAndRule', function () {
     var byFolderResults = [{
       filePath: 'path1/file1',
       messages: [
@@ -87,7 +87,7 @@ describe('statsUtils', function () {
       }];
 
     it('should divide the results by folder', function () {
-      var stats = statsUtil.getStatsByFolder(byFolderResults);
+      var stats = statsUtil.byFolderAndRule(byFolderResults);
       var expectedResult = {
         path1: {
           id1: {errors: 2},

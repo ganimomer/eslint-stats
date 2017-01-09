@@ -1,15 +1,15 @@
 'use strict';
 describe('byError', function () {
-  var displayUtil = require('../util/displayUtil');
-  var statsUtil = require('../util/statsUtil');
+  var chart = require('../util/chart');
+  var stats = require('../util/stats');
   var byError = require('../byError');
 
   it('should receive results and pass them to methods', function () {
-    spyOn(statsUtil, 'getStats').and.returnValue({semi: {errors: 2}});//[{ruleCount: {'semi': 1}, severity: 2}]);
-    spyOn(displayUtil, 'getObjectOutput').and.returnValue('output');
+    spyOn(stats, 'byRule').and.returnValue({semi: {errors: 2}});
+    spyOn(chart, 'getObjectOutput').and.returnValue('output');
     var logOutput = byError('initial');
-    expect(statsUtil.getStats).toHaveBeenCalledWith('initial', 2);
-    expect(displayUtil.getObjectOutput).toHaveBeenCalledWith({semi: {errors: 2}});
+    expect(stats.byRule).toHaveBeenCalledWith('initial', 2);
+    expect(chart.getObjectOutput).toHaveBeenCalledWith({semi: {errors: 2}}, jasmine.any(Number));
     expect(logOutput).toBe('output');
   });
 
