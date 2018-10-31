@@ -23,12 +23,12 @@
   },
   "license": "MIT",
   "devDependencies": {
-    "coveralls": "^2.11.15",
-    "cross-env": "^3.1.4",
-    "eslint": "^3.13.0",
-    "eslint-config-wix-editor": "^0.2.3",
-    "jasmine": "^2.5.2",
-    "nyc": "^10.0.0"
+    "coveralls": "3.0.2",
+    "cross-env": "5.2.0",
+    "eslint": "5.8.0",
+    "eslint-config-wix-editor": "6.0.0",
+    "jasmine": "3.3.0",
+    "nyc": "13.1.0"
   },
   "dependencies": {
     "chalk": "^2.4.1",
