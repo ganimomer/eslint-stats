@@ -1,6 +1,6 @@
 {
   "name": "eslint-stats",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "A package of custom formatters that show aggregated stats of eslint errors",
   "main": "index.js",
   "scripts": {
